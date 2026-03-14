@@ -1029,32 +1029,39 @@ document.getElementById("addblock").onclick = function () {
       location.reload();
     }, 300);
   }
-  box.querySelector("#getInfor").onclick = function () {
+  box.querySelector("#getInfor").onclick = function (e) {
+    e.preventDefault();
     const selectChart = box.querySelector("#chartType").value;
     const selectCard = box.querySelector("#cardType").value;
     const selectPin = box.querySelector("#selectPin").value;
     let cardName = box.querySelector("#cardName").value;
     const labelchart = box.querySelector("#labelchart").value;
     const labelchart2 = box.querySelector("#labelchart2").value;
+    const errorchartSelect = box.querySelector("#error-chartSelect");
+    const errorselectPin2 = box.querySelector("#error-selectPin2");
     var saved = 0;
     if (cardName == "") {
       cardName = "test" + count;
     }
-    if (selectChart == "pie" || selectChart == "doughnut") {
-      alert(
-        "tính năng đang được phát triển \n bạn vui lòng chọn loại biểu đồ khác",
-      );
-      return;
-    }
     if (selectCard == "Sensor") {
+      if (selectChart == "pie" || selectChart == "doughnut") {
+        alert(
+          `Biểu đồ ${selectChart} đang được phát triển. Bạn vui lòng chọn loại biểu đồ khác`,
+        );
+        return;
+      }
       if (selectChart == "mixchart") {
         if (labelchart2 == "") {
-          alert("vui lòng bổ sung nhãn 2 cho biểu đồ,vui lòng tạo lại card");
+          alert("vui lòng bổ sung nhãn 2 cho biểu đồ");
+          return;
+        }
+        if (labelchart == "") {
+          alert("vui lòng bổ sung nhãn 1 cho biểu đồ");
           return;
         }
       } else {
         if (labelchart == "") {
-          alert("vui lòng bổ sung nhãn cho biểu đồ,vui lòng tạo lại card");
+          alert("vui lòng bổ sung nhãn 1 cho biểu đồ");
           return;
         }
       }
