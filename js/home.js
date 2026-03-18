@@ -1,6 +1,8 @@
 const charts = {};
 let count = Number(localStorage.getItem("cardCount")) || 4;
 const user = localStorage.getItem("username");
+let x = 0;
+let y = 0;
 // if (user == "") {
 //   alert("vui lòng đăng nhập để sử dụng hệ thống");
 //   window.location.href = "index.html";
@@ -369,52 +371,43 @@ function saveCardToLocal(cardData) {
   cards.push(cardData);
   localStorage.setItem("cards", JSON.stringify(cards));
 }
-let x = 0;
-let y = 0;
-onValue(ref(db, `users/${user}/storage`), (snapshot) => {
-  const data = snapshot.val();
-  console.log(data);
-  localStorage.removeItem("cards");
-  Object.entries(data).forEach(([key, card]) => {
-    localStorage.setItem("cardCount", key);
-    var infor = {
-      id: card.id,
-      name: card.name,
-      type: card.type,
-      pin1: card.pin1,
-      pin2: null,
-      chartType: card.chartType,
-      label: card.label,
-      label2: card.label2,
-    };
-    // if (card.type == "sensor") {
-    //   var infor = {
-    //     id: card.count,
-    //     name: card.name,
-    //     type: card.type,
-    //     pin1: card.pin1,
-    //     pin2: null,
-    //     chartType: card.chartType,
-    //     label: card.label,
-    //     label2: card.label2,
-    //   };
-    // } else {
-    //   var infor = {
-    //     id: card.count,
-    //     name: card.name,
-    //     type: card.type,
-    //     pin1: card.pin1,
-    //     pin2: card.pin2,
-    //   };
-    // }
-    saveCardToLocal(infor);
-  });
-});
-window.onload = () => {
-  const cards = JSON.parse(localStorage.getItem("cards")) || [];
-  if (cards.length === 0) {
-    localStorage.setItem("cardCount", 4);
+async function loadData() {
+  try {
+    const snapshot = await get(ref(db, `users/${user}/storage`));
+
+    if (!snapshot.exists()) {
+      console.log("Không có dữ liệu");
+      return;
+    }
+
+    const data = snapshot.val();
+    console.log("đang chạy");
+
+    localStorage.removeItem("cards");
+
+    Object.entries(data).forEach(([key, card]) => {
+      localStorage.setItem("cardCount", key);
+
+      var infor = {
+        id: card.id,
+        name: card.name,
+        type: card.type,
+        pin1: card.pin1,
+        pin2: null,
+        chartType: card.chartType,
+        label: card.label,
+        label2: card.label2,
+      };
+
+      saveCardToLocal(infor);
+    });
+  } catch (err) {
+    alert("có lỗi xảy ra khi đồng bộ dữ liệu, vui lòng làm mới lại trang");
   }
+}
+window.onload = async () => {
+  await loadData();
+  const cards = JSON.parse(localStorage.getItem("cards")) || [];
   var drawflowContainer = document.getElementById("drawflow");
   var editor = new Drawflow(drawflowContainer);
   const maxHeight = document.querySelector("#drawflow").offsetHeight;
@@ -548,21 +541,21 @@ window.onload = () => {
                   <span class="ref-dtb">"users/${user}/Card/Data-${card.id}-1"</span>
                   <br> - Cài đặt giá trị:
                   <span class="ref-dtb">
-                    Firebase.setFloat(fbdo,"users/${user}/Card/Data-${card.id}-1", #giá_trị)
+                    setFloat(fbdo,"users/${user}/Card/Data-${card.id}-1", #giá_trị)
                   </span>
                   <br> - Tải về giá trị ngưỡng nhiệt độ:
                   <span class="ref-dtb">
-                    Firebase.getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB1")
+                    getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB1")
                   </span>
                   <br> - Tải về giá trị ngưỡng độ ẩm:
                   <span class="ref-dtb">
-                    Firebase.getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB2")
+                    getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB2")
                   </span>
                   <br> * Chú ý:
                   <br> - Dữ liệu tải về từ database là json nên phải chuyển đổi sang Interge hoặc Float để sử dụng
                   <br> - Ví dụ:
                   <br> + <span class="ref-dtb">
-                    Firebase.getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB1");
+                    getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB1");
                   </span>
                   <br> + <span class="ref-dtb">
                     float tempCB = fbdo.floatData();
@@ -581,29 +574,29 @@ window.onload = () => {
                 <span class="ref-dtb">"users/${user}/Card/Data-${card.id}-2"</span> <br />
                 - Cài đặt giá trị kênh 1: <br />
                 <span class="ref-dtb">
-                  Firebase.setFloat(fbdo,"users/${user}/Card/Data-${card.id}-1", #giá_trị)
+                  setFloat(fbdo,"users/${user}/Card/Data-${card.id}-1", #giá_trị)
                 </span>
                 <br />
                 - Cài đặt giá trị kênh 2: <br />
                 <span class="ref-dtb">
-                  Firebase.setFloat(fbdo,"users/${user}/Card/Data-${card.id}-2", #giá_trị)
+                  setFloat(fbdo,"users/${user}/Card/Data-${card.id}-2", #giá_trị)
                 </span>
                 <br />
                 - Tải về giá trị ngưỡng nhiệt độ: <br />
                 <span class="ref-dtb">
-                  Firebase.getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB1")
+                  getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB1")
                 </span>
                 <br />
                 - Tải về giá trị ngưỡng độ ẩm: <br />
                 <span class="ref-dtb">
-                  Firebase.getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB2")
+                  getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB2")
                 </span>
                 <br />
                 * Chú ý: <br />
                 - Dữ liệu tải về từ database là json nên phải chuyển đổi sang Integer hoặc Float để sử dụng <br />
                 - Ví dụ: <br />
                 <span class="ref-dtb">
-                  Firebase.getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB1");
+                  getFloat(fbdo,"users/${user}/Card/Data-${card.id}-CB1");
                 </span>
                 <br />
                 <span class="ref-dtb">
@@ -820,19 +813,19 @@ window.onload = () => {
               <br>- Đường dẫn database kênh 1:
               <br><span class="ref-dtb">users/${user}/Out/Out-${card.id}-1</span>
               <br>- Cài đặt giá trị kênh 1:
-              <br><span class="ref-dtb">Firebase.setInt(fbdo,"users/${user}/Out/Out-${card.id}-1",#gia_tri)</span>
+              <br><span class="ref-dtb">setInt(fbdo,"users/${user}/Out/Out-${card.id}-1",#gia_tri)</span>
               <br>- Tải về giá trị kênh 1:
-              <br><span class="ref-dtb">Firebase.getInt(fbdo,"users/${user}/Out/Out-${card.id}-1")</span>
+              <br><span class="ref-dtb">getInt(fbdo,"users/${user}/Out/Out-${card.id}-1")</span>
               <br>- Đường dẫn database kênh 2:
               <br><span class="ref-dtb">users/${user}/Out/Out-${card.id}-2</span>
               <br>- Cài đặt giá trị kênh 2:
-              <br><span class="ref-dtb">Firebase.setInt(fbdo,"users/${user}/Out/Out-${card.id}-2",#gia_tri)</span>
+              <br><span class="ref-dtb">setInt(fbdo,"users/${user}/Out/Out-${card.id}-2",#gia_tri)</span>
               <br>- Tải về giá trị kênh 2:
-              <br><span class="ref-dtb">Firebase.getInt(fbdo,"users/${user}/Out/Out-${card.id}-2")</span>
+              <br><span class="ref-dtb">getInt(fbdo,"users/${user}/Out/Out-${card.id}-2")</span>
               <br>* Chú ý:
               <br>- Dữ liệu tải về từ database là<span class="ref-dtb">JSON</span>nên cần chuyển sang<span class="ref-dtb">int</span>hoặc<span class="ref-dtb">float</span>để sử dụng
               <br>- Ví dụ:
-              <br><span class="ref-dtb">Firebase.getInt(fbdo,"users/${user}/Out/Out-${card.id}-2");</span>
+              <br><span class="ref-dtb">getInt(fbdo,"users/${user}/Out/Out-${card.id}-2");</span>
               <br><span class="ref-dtb">int out2=fbdo.intData();</span>
             </p>
           </div>
@@ -866,13 +859,13 @@ window.onload = () => {
             <br>- Đường dẫn database:
             <br><span class="ref-dtb">users/${user}/Out/Out-${card.id}-1</span>
             <br>- Để cài đặt giá trị:
-            <br><span class="ref-dtb">Firebase.setInt(fbdo,"users/${user}/Out/Out-${card.id}-1",#gia_tri)</span>
+            <br><span class="ref-dtb">setInt(fbdo,"users/${user}/Out/Out-${card.id}-1",#gia_tri)</span>
             <br>- Để tải về giá trị:
-            <br><span class="ref-dtb">Firebase.getInt(fbdo,"users/${user}/Out/Out-${card.id}-1")</span>
+            <br><span class="ref-dtb">getInt(fbdo,"users/${user}/Out/Out-${card.id}-1")</span>
             <br>* Chú ý:
             <br>- Dữ liệu tải về từ database là<span class="ref-dtb">json</span>nên phải chuyển đổi sang<span class="ref-dtb">Integer</span>hoặc<span class="ref-dtb">Float</span>để sử dụng
             <br>- Ví dụ:
-            <br><span class="ref-dtb">Firebase.getInt(fbdo,"users/${user}/Out/Out-${card.id}-1");</span>
+            <br><span class="ref-dtb">getInt(fbdo,"users/${user}/Out/Out-${card.id}-1");</span>
             <br><span class="ref-dtb">int out1=fbdo.intData();</span>
             </p>
           </div>
@@ -881,7 +874,6 @@ window.onload = () => {
     }
   });
 };
-
 document.getElementById("addblock").onclick = function () {
   let box = document.createElement("div");
   count++;
@@ -1081,7 +1073,7 @@ document.getElementById("addblock").onclick = function () {
         label: labelchart,
         label2: labelchart2,
       };
-      // saveCardToLocal(infor);
+      saveCardToLocal(infor);
       set(ref(db, `users/${user}/storage/${count}`), infor);
       saved = 1;
     } else if (selectCard == "control") {
@@ -1100,7 +1092,7 @@ document.getElementById("addblock").onclick = function () {
           pin2: null,
           chartType: null,
         };
-        // saveCardToLocal(infor);
+        saveCardToLocal(infor);
         set(ref(db, `users/${user}/storage/${count}`), infor);
       } else {
         const selectPin2 = box.querySelector("#selectPin2").value;
@@ -1122,7 +1114,7 @@ document.getElementById("addblock").onclick = function () {
           pin2: selectPin2,
           chartType: null,
         };
-        // saveCardToLocal(infor);
+        saveCardToLocal(infor);
         set(ref(db, `users/${user}/storage/${count}`), infor);
       }
       saved = 1;
@@ -1423,11 +1415,16 @@ document.addEventListener("change", function (e) {
 });
 
 document.getElementById("logout").onclick = function () {
-  localStorage.removeItem("cards");
-  let user = localStorage.getItem("username");
-  user = "";
-  localStorage.setItem("username", user);
-  window.location.href = "index.html";
+  let text = "Bạn có muốn đăng xuất ?";
+  if (confirm(text) == true) {
+    localStorage.removeItem("cards");
+    let user = localStorage.getItem("username");
+    user = "";
+    localStorage.setItem("username", user);
+    window.location.href = "index.html";
+  } else {
+    return;
+  }
 };
 
 document.getElementById("chat").onclick = function () {
