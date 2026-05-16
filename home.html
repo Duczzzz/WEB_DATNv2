@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nuke DashBoard</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="css/home.css" />
     <link
@@ -31,6 +32,21 @@
         font-family: "JetBrains Mono", monospace;
         font-size: larger;
       }
+      #admincontrol {
+        max-width: 100%;
+      }
+      #user {
+        color: red;
+      }
+      #mail {
+        color: green;
+      }
+      #ip {
+        color: blue;
+      }
+      .control {
+        margin: 0 auto;
+      }
     </style>
   </head>
   <body>
@@ -51,6 +67,15 @@
       Xin chào, chúc bạn <span id="name">------</span> có một trải nghiệm tuyệt
       vời tại Nuke Dashboard
     </h1>
+    <div class="box control" id="control">
+      <div class="swBTN">
+        <h1 id="controlUserLabel">Chế độ quản lý</h1>
+        <label class="switch">
+          <input type="checkbox" id="controlUser" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
     <div class="container">
       <div class="box" id="main">
         <section class="intro">
@@ -106,17 +131,28 @@
           </div>
         </section>
       </div>
+      <div class="box" id="admincontrol">
+        <h1 class="heading">Quản lý người dùng</h1>
+      </div>
     </div>
     <script>
+      $.getJSON("https://api.ipify.org?format=json", function (data) {
+        var ip = data.ip;
+        localStorage.setItem("ip", ip);
+      });
       const user = localStorage.getItem("username");
+      var usercontrol = ["duc", "luong", "admin"];
+      document.getElementById("admincontrol").style.display = "none";
+      if (!usercontrol.includes(user)) {
+        document.getElementById("control").style.display = "none";
+      }
       document.getElementById("name").innerText = user;
       document.getElementById("logout").onclick = function () {
         let text = "Bạn có muốn đăng xuất ?";
         if (confirm(text) == true) {
           localStorage.removeItem("cards");
           let user = localStorage.getItem("username");
-          user = "";
-          localStorage.setItem("username", user);
+          localStorage.removeItem("username");
           window.location.href = "index.html";
         } else {
           return;

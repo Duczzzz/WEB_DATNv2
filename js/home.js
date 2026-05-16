@@ -1,6 +1,8 @@
 const charts = {};
 const user = localStorage.getItem("username");
+const ip = localStorage.getItem("ip");
 if (user == null) {
+  alert("Bạn chưa đăng nhập, vui lòng đăng nhập để tiếp tục");
   window.location.ref = "index.html";
 }
 let x = 0;
@@ -16,15 +18,9 @@ async function getPing(url) {
   }
 }
 async function pingMultiple() {
-  const urls = [
-    "https://reptiloid-natasha-gentlemanly.ngrok-free.dev",
-    "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js",
-  ];
-
-  for (const url of urls) {
-    const ping = await getPing(url);
-    return ping;
-  }
+  const urls = "https://reptiloid-natasha-gentlemanly.ngrok-free.dev";
+  const ping = await getPing(urls);
+  return ping;
 }
 async function showPing() {
   const ping = await pingMultiple();
@@ -52,6 +48,7 @@ function checkUser() {
     return false;
   } else return true;
 }
+
 if (!checkUser() && devtools.isOpen) {
   window.location.href = "home.html";
   document.getElementById("titleofhome").innerText =
@@ -85,9 +82,60 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const time = new Date().toLocaleTimeString();
+const date = new Date().toLocaleDateString();
 const userRef = ref(db, `users/${user}/logout`);
+const boxcontrol = document.getElementById("admincontrol");
+const boxmain = document.getElementById("main");
+const boxsub = document.getElementById("sub");
+
+// if (boxcontrol != null && boxmain != null && boxsub != null) {
+//   boxcontrol.style.display = checkUser() ? "block" : "none";
+//   boxmain.style.display = checkUser() ? "none" : "block";
+//   boxsub.style.display = checkUser() ? "none" : "block";
+// }
+document.addEventListener("change", function (e) {
+  console.log(e.target.id);
+  if (e.target.id === "controlUser") {
+    if (e.target.checked) {
+      boxcontrol.style.display = "block";
+      boxmain.style.display = "none";
+      boxsub.style.display = "none";
+    } else {
+      boxcontrol.style.display = "none";
+      boxmain.style.display = "block";
+      boxsub.style.display = "block";
+    }
+  } else {
+    return;
+  }
+});
+if (checkUser()) {
+  get(ref(db, `users/`)).then((snapshot) => {
+    var count = 0;
+    const data = snapshot.val();
+    Object.entries(data).forEach(([key, index]) => {
+      count++;
+      const infor = document.createElement("p");
+      infor.id = "userin4" + count;
+      for (const key2 in index) {
+        if (key2 == "ip") {
+          var ip = index[key2];
+          // listip.push(index[key2]);
+        }
+        if (key2 == "email") {
+          var mail = index[key2];
+          // listmail.push(index[key2]);
+        }
+      }
+      infor.innerHTML = `<p><span id="user">${key}</span> - <span id="mail">${mail} - <span id="ip">${ip}</span></span></p>`;
+      document.querySelector("#admincontrol").appendChild(infor);
+    });
+  });
+}
+set(ref(db, `users/${user}/ip`), ip);
 onDisconnect(userRef).set({
   time: time,
+  date: date,
 });
 
 window.scrollTo({
