@@ -109,7 +109,7 @@ document.addEventListener("change", function (e) {
     return;
   }
 });
-if (checkUser()) {
+if (checkUser() && document.getElementById("admincontrol") != null) {
   get(ref(db, `users/`)).then((snapshot) => {
     var count = 0;
     const data = snapshot.val();
@@ -128,7 +128,10 @@ if (checkUser()) {
         }
       }
       infor.innerHTML = `<p><span id="user">${key}</span> - <span id="mail">${mail} - <span id="ip">${ip}</span></span></p>`;
-      document.querySelector("#admincontrol").appendChild(infor);
+      var boxcontrol = document.getElementById("admincontrol");
+      if (boxcontrol != null) {
+        boxcontrol.appendChild(infor);
+      }
     });
   });
 }
@@ -192,9 +195,23 @@ initchat();
 async function chatNor(msgu) {
   const boxes = document.querySelectorAll(".box");
   const cardNames = Array.from(boxes).map((box) => {
-    const title = box.querySelector(".heading");
-    return title ? title.innerText : "Sơ đồ kết nối của board";
+    const title =
+      box.querySelector(".heading")?.innerText || "Sơ đồ kết nối của board";
+
+    const ids = ["#Sensor", "#control", "#timecontrol", "#servocontrol"];
+
+    let subtitle = "";
+
+    ids.forEach((id) => {
+      const el = box.querySelector(id);
+      if (el) {
+        subtitle += ` - ${el.innerText}`;
+      }
+    });
+
+    return title + subtitle;
   });
+  console.log(cardNames);
   let box = document.createElement("div");
   box.className = "msg bot";
   box.innerText = `Đang suy luận...`;
@@ -823,7 +840,7 @@ window.onload = async () => {
         <div class="content">
         <h1 class="heading">${card.name}</h1>
         <h2>ID card: ${card.id}</h2>
-        <h2>Loại card: ${card.type}</>
+        <h2 id="${card.type}">Loại card: ${card.type}</>
         <h2>Chân kết nối: GPIO${card.pin1}</>
         <h2>Loại biểu đồ: ${card.chartType}</>
         ${
@@ -1165,7 +1182,7 @@ window.onload = async () => {
         box.innerHTML = `
           <h1 class="heading">${card.name}</h1>
           <h2>ID card: ${card.id}</h2>
-          <h2>Loại card: ${card.type}</h2>
+          <h2 id="${card.type}">Loại card: ${card.type}</h2>
           <h2>Chân kết nối: GPIO${card.pin1}</h2>
           <h2>Chân kết nối2: GPIO${card.pin2}</h2>
           <div class="button_group">
@@ -1214,7 +1231,7 @@ window.onload = async () => {
         box.innerHTML = `
           <h1 class="heading">${card.name}</h1>
           <h2>ID card: ${card.id}</h2>
-          <h2>Loại card: ${card.type}</h2>
+          <h2 id="${card.type}">Loại card: ${card.type}</h2>
           <h2>Chân kết nối: GPIO${card.pin1}</h2>
           <div class="button_group">
             <button class="btnControl" id="btnin-${card.id}-1">OFF ${card.pin1}</button>
@@ -1285,7 +1302,7 @@ window.onload = async () => {
       box.innerHTML = `
           <h1 class="heading">${card.name}</h1>
           <h2>ID card: ${card.id}</h2>
-          <h2>Loại card: ${card.type}</h2>
+          <h2 id="${card.type}">Loại card: ${card.type}</h2>
           <h2>Chân kết nối: GPIO${card.pin1}</h2>
           <h2>Trạng thái động cơ: <span id="Warnled-${card.id}">Đang tắt</span></h2>
           <form class="form-time">
@@ -1350,7 +1367,7 @@ window.onload = async () => {
       box.innerHTML = `
           <h1 class="heading">${card.name}</h1>
           <h2>ID card: ${card.id}</h2>
-          <h2>Loại card: ${card.type}</h2>
+          <h2 id="${card.type}">Loại card: ${card.type}</h2>
           <h2>Chân kết nối: GPIO${card.pin1}</h2>
           <div class="slidecontainer">
             <h2>góc: <span id="angles-${card.id}"></span></h2>
