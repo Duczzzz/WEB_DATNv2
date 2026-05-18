@@ -499,9 +499,9 @@ const mixedChart2 = new Chart(ctx2, {
   },
 });
 function showAllDHT11() {
-  mixedChart.data.labels = fullData2.labels;
-  mixedChart.data.datasets[0].data = fullData2.temp;
-  mixedChart.data.datasets[1].data = fullData2.humi;
+  mixedChart.data.labels = fullData.labels;
+  mixedChart.data.datasets[0].data = fullData.temp;
+  mixedChart.data.datasets[1].data = fullData.humi;
   mixedChart.update();
 }
 let fullData = {
@@ -533,9 +533,9 @@ onValue(ref(db, `users/${user}/dht11`), (snapshot) => {
   fullData.labels.push(time);
   fullData.temp.push(temp);
   fullData.humi.push(humi);
-  mixedChart.data.labels = fullData2.labels.slice(-maxPoints1);
-  mixedChart.data.datasets[0].data = fullData2.temp.slice(-maxPoints1);
-  mixedChart.data.datasets[1].data = fullData2.humi.slice(-maxPoints1);
+  mixedChart.data.labels = fullData.labels.slice(-maxPoints1);
+  mixedChart.data.datasets[0].data = fullData.temp.slice(-maxPoints1);
+  mixedChart.data.datasets[1].data = fullData.humi.slice(-maxPoints1);
   if (live2) {
     mixedChart.resetZoom();
   } else {
