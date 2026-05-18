@@ -191,7 +191,11 @@ async function initchat() {
   `;
   document.querySelector("#chatBody").appendChild(box);
 }
-initchat();
+if (!checkUser() && devtools.isClose) {
+  initchat();
+} else if (checkUser()) {
+  initchat();
+}
 async function chatNor(msgu) {
   const boxes = document.querySelectorAll(".box");
   const cardNames = Array.from(boxes).map((box) => {
@@ -280,6 +284,8 @@ async function chatNor(msgu) {
 async function chat(msgu) {
   const hdsd = await loadhdsd();
   const code = await loadcode();
+  console.log(hdsd);
+  console.log(code);
   let box = document.createElement("div");
   box.className = "msg bothd";
   box.innerText = `Đang suy luận...`;
