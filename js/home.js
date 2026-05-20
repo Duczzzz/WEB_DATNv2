@@ -509,13 +509,21 @@ let fullData = {
   temp: [],
   humi: [],
 };
+var lastTempCB2 = 0;
+var lastHumiCB2 = 0;
 onValue(ref(db, `users/${user}/dht11`), (snapshot) => {
   const data = snapshot.val();
   if (!data) return;
   const tempCB = data.CBNDDht11;
   const doamCB = data.CBDADht11;
-  document.getElementById("WarnInfoTemp2").value = tempCB;
-  document.getElementById("WarnInfoHumi2").value = doamCB;
+  if (tempCB !== lastTempCB2) {
+    lastTempCB2 = tempCB;
+    document.getElementById("WarnInfoTemp2").value = tempCB;
+  }
+  if (doamCB !== lastHumiCB2) {
+    lastHumiCB2 = doamCB;
+    document.getElementById("WarnInfoHumi2").value = doamCB;
+  }
   let temp = data.Temp;
   let humi = data.Humi;
   if (temp == null || humi == null) return;
@@ -554,6 +562,8 @@ let fullData2 = {
   temp: [],
   humi: [],
 };
+var lastTempCB1 = 0;
+var lastHumiCB1 = 0;
 onValue(ref(db, `users/${user}/bme280`), (snapshot) => {
   const data = snapshot.val();
   if (!data) return;
@@ -561,8 +571,14 @@ onValue(ref(db, `users/${user}/bme280`), (snapshot) => {
   let humi = data.Humi;
   const tempCB = data.CBNDBME280;
   const doamCB = data.CBDABME280;
-  document.getElementById("WarnInfoTemp1").value = tempCB;
-  document.getElementById("WarnInfoHumi1").value = doamCB;
+  if (tempCB !== lastTempCB1) {
+    lastTempCB1 = tempCB;
+    document.getElementById("WarnInfoTemp1").value = tempCB;
+  }
+  if (doamCB !== lastHumiCB1) {
+    lastHumiCB1 = doamCB;
+    document.getElementById("WarnInfoHumi1").value = doamCB;
+  }
   temp = temp.toFixed(1);
   humi = humi.toFixed(1);
   const time = new Date().toLocaleTimeString();
