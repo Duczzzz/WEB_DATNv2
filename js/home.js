@@ -113,10 +113,16 @@ if (checkUser() && document.getElementById("admincontrol") != null) {
   get(ref(db, `users/`)).then((snapshot) => {
     var count = 0;
     const data = snapshot.val();
+    const sluser = document.createElement("p");
+    sluser.innerText = `Số lượng người dùng: ${Object.keys(data).length - 3}`;
+    var boxcontrol = document.getElementById("admincontrol");
+    if (boxcontrol != null) {
+      boxcontrol.appendChild(sluser);
+    }
     Object.entries(data).forEach(([key, index]) => {
       count++;
       const infor = document.createElement("p");
-      infor.id = "userin4" + count;
+      infor.id = "userin4-" + count;
       for (const key2 in index) {
         if (key2 == "ip") {
           var ip = index[key2];
@@ -371,7 +377,7 @@ async function chat(msgu) {
 
             ===Gợi ý===
             - GPIO đề xuất phù hợp cho thiết bị
-            - Thư viện cần dùng (Arduino / ESP32-S3)
+            - Thư viện cần dùng phù hợp với ESP32-S3
             - Lưu ý phần cứng (nguồn, chân đặc biệt nếu có)
 
             ===Giải thích===
@@ -1841,6 +1847,8 @@ document.getElementById("removeblock").onclick = function () {
           remove(ref(db, `users/${user}/Card/Data-minsta-${selectedId}`));
           remove(ref(db, `users/${user}/Card/Data-hoursto-${selectedId}`));
           remove(ref(db, `users/${user}/Card/Data-minsto-${selectedId}`));
+        } else if (cardToDelete.type == "servocontrol") {
+          remove(ref(db, `users/${user}/Servo/Servo-${selectedId}`));
         } else {
           remove(ref(db, `users/${user}/Out/Out-${selectedId}-1`));
           remove(ref(db, `users/${user}/In/In-${selectedId}-1`));
