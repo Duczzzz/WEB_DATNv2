@@ -12,8 +12,30 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v2
+
+      - name: Install ESP32 core
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install esp32:esp32 \
+            --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+
       - name: Compile firmware
-        uses: ArminJo/arduino-test-compile@v3
+        run: |
+          mkdir build
+
+          arduino-cli compile \
+            --fqbn esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=default \
+            --output-dir build \
+            Source_testBoard/BME280_test
+
+      - name: Copy BIN to root
+        run: |
+          cp build/*.bin .
+
+      - name: Upload BIN artifact
+        uses: actions/upload-artifact@v4
         with:
-          arduino-board-fqbn: esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=default
-          platform-url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          name: esp32s3-firmware
+          path: "*.bin"
