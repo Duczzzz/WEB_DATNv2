@@ -1,0 +1,19 @@
+name: ESP32-S3 Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Compile firmware
+        uses: ArminJo/arduino-test-compile@v3
+        with:
+          arduino-board-fqbn: esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=default
+          platform-url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
