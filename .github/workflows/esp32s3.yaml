@@ -48,14 +48,14 @@ jobs:
 
       - name: Copy BIN
         run: |
-          cp build/*.ino.bin firmware.bin
+          cp build/*.ino.bin firmware.ino.bin
 
       - name: Commit BIN
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-          git add firmware.bin
+          git add firmware.ino.bin
           git commit -m "update firmware bin" || echo "No changes"
 
           git push
