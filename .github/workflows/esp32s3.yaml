@@ -34,7 +34,7 @@ jobs:
           arduino-cli compile \
           --fqbn esp32:esp32:esp32s3:FlashSize=16M \
           --output-dir build \
-          Source_testBoard/BME280_test/BME280_test.ino
+          Source_testBoard/BME280_test/blink.ino
 
       - name: Upload BIN
         uses: actions/upload-artifact@v4
