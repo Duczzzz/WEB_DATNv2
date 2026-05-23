@@ -1,5 +1,6 @@
 name: ESP32-S3 Build ver2
-
+permissions:
+  contents: write
 on:
   push:
   pull_request:
@@ -36,8 +37,16 @@ jobs:
           --output-dir build \
           Source_testBoard/Source_testBoard.ino
 
-      - name: Upload BIN
-        uses: actions/upload-artifact@v4
-        with:
-          name: firmware
-          path: build/*.bin
+      - name: Copy BIN
+        run: |
+          cp build/*.bin firmware.bin
+
+      - name: Commit BIN
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+          git add firmware.bin
+          git commit -m "update firmware bin" || echo "No changes"
+
+          git push
