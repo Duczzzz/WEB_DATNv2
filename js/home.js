@@ -81,6 +81,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
 const time = new Date().toLocaleTimeString();
 const date = new Date().toLocaleDateString();
 const userRef = ref(db, `users/${user}/logout`);
@@ -152,10 +153,8 @@ window.scrollTo({
   behavior: "smooth",
 });
 
-async function loadhdsd() {
-  const hdsdRaw = await fetch(
-    "https://raw.githubusercontent.com/Duczzzz/DATN_WEB/main/hdsd.txt",
-  ).then((r) => r.text());
+async function loadhdsd(url) {
+  const hdsdRaw = await fetch(url).then((r) => r.text());
   return hdsdRaw.replaceAll("{user}", user);
 }
 async function loadcode() {
@@ -171,7 +170,8 @@ async function initchat() {
       method: "POST",
       body: JSON.stringify({
         // model: "gpt-oss:120b-cloud",
-        model: "gemma4:E4B",
+        // model: "gemma4:E4B",
+        model: "qwen2.5-coder:14b",
         messages: [
           {
             role: "system",
@@ -232,7 +232,8 @@ async function chatNor(msgu) {
       method: "POST",
       body: JSON.stringify({
         // model: "gpt-oss:120b-cloud",
-        model: "gemma4:E4B",
+        // model: "gemma4:E4B",
+        model: "qwen2.5-coder:14b",
         messages: [
           {
             role: "system",
@@ -288,10 +289,24 @@ async function chatNor(msgu) {
   document.querySelector("#chatBody").appendChild(box);
 }
 async function chat(msgu) {
-  const hdsd = await loadhdsd();
+  if (msgu.includes("servocontrol")) {
+    var url =
+      "https://raw.githubusercontent.com/Duczzzz/DATN_WEB/refs/heads/main/hdsd_servocontrol.txt";
+    var hdsd = await loadhdsd(url);
+  } else if (msgu.includes("timecontrol")) {
+    var url =
+      "https://raw.githubusercontent.com/Duczzzz/DATN_WEB/refs/heads/main/hdsd_timecontrol.txt";
+    var hdsd = await loadhdsd(url);
+  } else if (msgu.includes("Sensor")) {
+    var url =
+      "https://raw.githubusercontent.com/Duczzzz/DATN_WEB/refs/heads/main/hdsd_sensor.txt";
+    var hdsd = await loadhdsd(url);
+  } else if (msgu.includes("control")) {
+    var url =
+      "https://raw.githubusercontent.com/Duczzzz/DATN_WEB/refs/heads/main/hdsd_control.txt";
+    var hdsd = await loadhdsd(url);
+  }
   const code = await loadcode();
-  console.log(hdsd);
-  console.log(code);
   let box = document.createElement("div");
   box.className = "msg bothd";
   box.innerText = `Đang suy luận...`;
@@ -302,7 +317,8 @@ async function chat(msgu) {
       method: "POST",
       body: JSON.stringify({
         // model: "gpt-oss:120b-cloud",
-        model: "gemma4:E4B",
+        // model: "gemma4:E4B",
+        model: "qwen2.5-coder:14b",
         messages: [
           {
             role: "system",
@@ -316,12 +332,6 @@ async function chat(msgu) {
             - Thay "{user}" bằng "${user}" trong đường dẫn database.
             - Không sửa lại nội dung gốc trong hướng dẫn.
 
-            ====================
-            TRƯỜNG HỢP ĐẶC BIỆT
-            ====================
-            - Nếu người dùng yêu cầu hướng dẫn các card (DHT11, BME280, Điều khiển In Out1)
-            → chỉ trả lời:
-            "Xin mời bạn nhấn vào nút code test trên thanh công cụ để xem hướng dẫn sử dụng."
 
             ====================
             QUY TẮC XỬ LÝ CODE
@@ -331,11 +341,11 @@ async function chat(msgu) {
             - CHỈ được viết thêm code vào 2 vị trí sau:
 
             1. /*
-              Người dùng build code tại đây
+              Những thứ cần setup trong code
               */
 
             2. /*
-              Xây dựng cơ chế xử lý của bạn tại đây
+              Cơ chế xử lý
               */
 
             - KHÔNG được:
@@ -383,7 +393,7 @@ async function chat(msgu) {
             ===Giải thích===
             - Giải thích ngắn gọn (tối đa 5 dòng)
 
-            ⚠️ Đây là code do AI tạo ra, có thể xảy ra lỗi.
+            ⚠️ Đây là code do AI tạo ra, có thể xảy ra lỗi (bắt buộc phải có).
 
             ====================
             CODE MẪU:
@@ -607,7 +617,10 @@ onValue(ref(db, `users/${user}/bme280`), (snapshot) => {
   }
   mixedChart2.update();
 });
+
 onValue(ref(db, `users/${user}/Out`), (snapshot) => {
+  console.log("test độ trễ nhận dữ liệu từ firebase");
+  const start = performance.now();
   const data = snapshot.val();
   if (!data) return;
   const status1 = data.Out1;
@@ -622,6 +635,8 @@ onValue(ref(db, `users/${user}/Out`), (snapshot) => {
   } else {
     document.getElementById("status2").innerText = "OUT 2 Đang tắt";
   }
+  const end = performance.now();
+  console.log("Độ trễ:", end - start, "ms");
 });
 onValue(ref(db, `users/${user}/bme280/ledbme280`), (snapshot) => {
   if (snapshot.val() == 1) {
@@ -633,7 +648,9 @@ onValue(ref(db, `users/${user}/dht11/leddht11`), (snapshot) => {
     document.getElementById("warnLedDht11").innerText = "Đang bật";
   } else document.getElementById("warnLedDht11").innerText = "Đang tắt";
 });
-document.getElementById("btn-inout1").onclick = function () {
+document.getElementById("btn-inout1").onclick = async function () {
+  console.log("test độ trễ truyền dữ liệu đến firebase");
+  const start = performance.now();
   const btn = document.getElementById("btn-inout1");
   if (btn.style.backgroundColor == "rgb(255, 152, 152)") {
     set(ref(db, `users/${user}/In/In1`), 1);
@@ -643,6 +660,13 @@ document.getElementById("btn-inout1").onclick = function () {
     set(ref(db, `users/${user}/In/In1`), 0);
     btn.style.backgroundColor = "rgb(255, 152, 152)";
     btn.innerText = "OFF 1";
+  }
+  const snapshot = await get(ref(db, `users/${user}/In/In1`));
+
+  const kq = snapshot.val();
+  if (kq == 1) {
+    const end = performance.now();
+    console.log("Độ trễ:", end - start, "ms");
   }
 };
 document.getElementById("btn-inout2").onclick = function () {
