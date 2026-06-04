@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot UI</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/home.css" />
+    <link rel="stylesheet" href="css/chatbot.css" />
+  </head>
+  <body>
+    <h1 class="head">NUKE DASHBOARD</h1>
+    <div class="menu">
+      <ul>
+        <li><a href="home.html">Trang chủ</a></li>
+        <li><a href="source.html">Code test</a></li>
+        <li>
+          <a href="cambien.html">Bảng điều khiển</a>
+        </li>
+        <li>
+          <a href="chatbot.html" style="background-color: rgb(231, 255, 95)"
+            >Chatbot Pro</a
+          >
+        </li>
+        <li><a id="logout">Đăng xuất</a></li>
+      </ul>
+    </div>
+    <div class="swBTN">
+      <p>cấu hình hệ thống</p>
+      <label class="switch">
+        <input type="checkbox" id="SW-SYSTEM" checked="true" />
+        <span class="slider round"></span>
+      </label>
+    </div>
+    <div class="box" id="system-box">
+      <h1 style="margin: 0 auto">Cấu hình hệ thống</h1>
+      <div class="config">
+        <form class="tcForm">
+          <label for="SSID">SSID:</label>
+          <input type="text" id="SSID" placeholder="Nhập tên mạng WiFi" />
+          <br />
+          <label for="password">Mật khẩu:</label>
+          <input type="text" id="password" placeholder="Nhập mật khẩu WiFi" />
+          <br />
+          <label for="api-key">API Key:</label>
+          <input type="text" id="api-key" placeholder="Nhập API Key của bạn" />
+          <button type="button" id="save-config">Lưu cấu hình</button>
+        </form>
+      </div>
+    </div>
+    <div class="cb-wrap" id="cb-warp" style="display: none">
+      <!-- Header -->
+      <div class="cb-header">
+        <div class="cb-avatar"><i class="ti ti-robot"></i></div>
+        <div class="cb-info">
+          <div class="cb-name">Trợ lý AI</div>
+          <div class="cb-status">
+            <span class="cb-dot"></span>Đang hoạt động
+          </div>
+        </div>
+        <div class="cb-actions">
+          <button class="cb-btn" title="Tìm kiếm">
+            <i class="ti ti-search"></i>
+          </button>
+          <button class="cb-btn" title="Thêm">
+            <i class="ti ti-dots-vertical"></i>
+          </button>
+          <button class="cb-btn" title="Update" id="update-OTA">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="cb-messages" id="cb-messages">
+        <div class="msg bot">
+          <div class="msg-avatar bot">AI</div>
+          <div>
+            <div class="msg-bubble" id="Welcome">
+              Đang kết nối với AI... Xin chờ trong giây lát!
+            </div>
+            <div class="msg-time">09:00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Composer -->
+      <div class="cb-composer">
+        <div class="cb-input-wrap">
+          <textarea
+            id="cb-input"
+            rows="1"
+            placeholder="Nhập tin nhắn..."
+          ></textarea>
+          <button class="attach-btn" title="Đính kèm">
+            <i class="ti ti-paperclip"></i>
+          </button>
+        </div>
+        <button class="send-btn" id="send-btn" aria-label="Gửi">
+          <i class="ti ti-send"></i>
+        </button>
+      </div>
+    </div>
+
+    <script src="js/chatbot.js" type="module"></script>
+  </body>
+</html>
