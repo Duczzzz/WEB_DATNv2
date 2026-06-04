@@ -264,7 +264,7 @@ function createCode(ssid, pass) {
 import OpenAI from "https://esm.sh/openai";
 import { Octokit } from "https://esm.sh/@octokit/core";
 const octokit = new Octokit({
-  auth: "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",
+  auth: "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",
 });
 
 async function chatinit() {
