@@ -1,7 +1,9 @@
 var wifi = "";
 var pass = "";
 var apikey = "";
+var tokengh = "";
 let client = null;
+let octokit = null;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import {
   getDatabase,
@@ -263,9 +265,6 @@ function createCode(ssid, pass) {
 
 import OpenAI from "https://esm.sh/openai";
 import { Octokit } from "https://esm.sh/@octokit/core";
-const octokit = new Octokit({
-  auth: "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",
-});
 
 async function chatinit() {
   const chat = await client.chat.completions.create({
@@ -507,10 +506,14 @@ document.getElementById("save-config").onclick = function () {
   wifi = document.getElementById("SSID").value.trim();
   pass = document.getElementById("password").value.trim();
   apikey = document.getElementById("api-key").value.trim();
+  tokengh = document.getElementById("token-github").value.trim();
   client = new OpenAI({
     apiKey: apikey,
     baseURL: "https://api.groq.com/openai/v1",
     dangerouslyAllowBrowser: true,
+  });
+  octokit = new Octokit({
+    auth: tokengh,
   });
   alert("Cấu hình đã được lưu. Bạn có thể bắt đầu trò chuyện với chatbot.");
 };
