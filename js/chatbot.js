@@ -1,4 +1,5 @@
 import devtools from "https://cdn.jsdelivr.net/npm/devtools-detect@4.0.2/index.js";
+let user = localStorage.getItem("username") || "";
 const userControl = ["admin", "duc", "luong"];
 function checkUser() {
   var check = userControl.includes(user);
