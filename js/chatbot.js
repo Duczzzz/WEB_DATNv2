@@ -569,4 +569,5 @@ document.getElementById("save-config").onclick = function () {
     auth: tokengh,
   });
   alert("Cấu hình đã được lưu. Bạn có thể bắt đầu trò chuyện với chatbot.");
+  document.getElementById("SW-SYSTEM").checked = false;
 };
