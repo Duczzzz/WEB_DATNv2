@@ -1,3 +1,32 @@
+import devtools from "https://cdn.jsdelivr.net/npm/devtools-detect@4.0.2/index.js";
+const userControl = ["admin", "duc", "luong"];
+function checkUser() {
+  var check = userControl.includes(user);
+  if (!check) {
+    return false;
+  } else return true;
+}
+document.getElementById("logout").onclick = function () {
+  let text = "Bạn có muốn đăng xuất ?";
+  if (confirm(text) == true) {
+    localStorage.removeItem("cards");
+    let user = localStorage.getItem("username");
+    localStorage.removeItem("username");
+    window.location.href = "index.html";
+  } else {
+    return;
+  }
+};
+if (!checkUser() && devtools.isOpen) {
+  window.location.href = "home.html";
+  document.getElementById("titleofhome").innerText =
+    "Hệ thống phát hiện devtools đang mở, vui lòng đóng devtools để sử dụng";
+}
+setInterval(() => {
+  if (!checkUser() && devtools.isOpen) {
+    window.location.href = "home.html";
+  }
+}, 100);
 var wifi = localStorage.getItem("wifi") || "";
 var pass = localStorage.getItem("pass") || "";
 var apikey = localStorage.getItem("apikey") || "";
