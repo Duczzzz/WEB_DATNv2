@@ -1,9 +1,29 @@
-var wifi = "";
-var pass = "";
-var apikey = "";
-var tokengh = "";
+var wifi = localStorage.getItem("wifi") || "";
+var pass = localStorage.getItem("pass") || "";
+var apikey = localStorage.getItem("apikey") || "";
+var tokengh = localStorage.getItem("tokengh") || "";
 let client = null;
 let octokit = null;
+function loadConfig() {
+  document.getElementById("SSID").value = wifi;
+  document.getElementById("password").value = pass;
+  document.getElementById("api-key").value = apikey;
+  document.getElementById("token-github").value = tokengh;
+  client = new OpenAI({
+    apiKey: apikey,
+    baseURL: "https://api.groq.com/openai/v1",
+    dangerouslyAllowBrowser: true,
+  });
+  octokit = new Octokit({
+    auth: tokengh,
+  });
+  document.getElementById("cb-warp").style.display = "flex";
+  document.getElementById("system-box").style.display = "none";
+  document.getElementById("SW-SYSTEM").checked = false;
+}
+if (wifi != "" && pass != "" && apikey != "" && tokengh != "") {
+  loadConfig();
+}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import {
   getDatabase,
@@ -507,6 +527,10 @@ document.getElementById("save-config").onclick = function () {
   pass = document.getElementById("password").value.trim();
   apikey = document.getElementById("api-key").value.trim();
   tokengh = document.getElementById("token-github").value.trim();
+  localStorage.setItem("wifi", wifi);
+  localStorage.setItem("pass", pass);
+  localStorage.setItem("apikey", apikey);
+  localStorage.setItem("tokengh", tokengh);
   client = new OpenAI({
     apiKey: apikey,
     baseURL: "https://api.groq.com/openai/v1",
