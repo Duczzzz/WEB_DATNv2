@@ -140,7 +140,7 @@ function createCode(ssid, pass) {
   FirebaseConfig config;
 
   int checkupdate = 0;
-
+  int demwf = 0;
   void getupdate()
   {
       display.setTextColor(SSD1306_WHITE);
