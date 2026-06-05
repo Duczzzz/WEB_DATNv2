@@ -98,7 +98,12 @@ function createCode(ssid, pass) {
   // Oled tft SCL chân 18
   // DHT chân 11
   // Điều khiển driver động cơ chân GPIO16 và GPIO15
-
+  // Nút nhấn sw8 chân 10 tích cực mức thấp
+  // Nút nhấn sw9 chân 12 tích cực mức thấp
+  // Nút nhấn sw11 chân 14 tích cực mức thấp
+  // Cảm biến khí CO MQ7 giá trị Analog chân 5, giá trị digital chân 4
+  // Cảm biến Khói gas MQ2 giá trị Analog chân 6, giá trị digital chân 7
+  
   #include <Wire.h>
   #include <FirebaseESP32.h>
   #include <WiFi.h>
