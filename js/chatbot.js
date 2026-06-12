@@ -284,7 +284,7 @@ function createCode(ssid, pass) {
         if(demwf < 80) {
           display.setCursor(demwf,30);
           display.print(".");
-          Serial0.println(".");
+          Serial.println(".");
         }
         else if(demwf > 80) {
           display.clearDisplay();
@@ -347,9 +347,54 @@ async function chatinit() {
   });
   document.getElementById("Welcome").textContent =
     chat.choices[0].message.content;
-  console.log(chat.usage);
 }
-//chatinit();
+// chatinit();
+async function checkRespone(code, text) {
+  const chat = await client.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
+    messages: [
+      {
+        role: "system",
+        content: `
+          Bạn là bộ kiểm tra source code ESP32-S3.
+
+          QUY TẮC:
+
+          - Chỉ đánh giá dựa trên source code được cung cấp.
+          - Không được suy đoán phần cứng.
+          - Không được suy đoán dây nối.
+          - Không được suy đoán cảm biến.
+          - Không được suy đoán URL.
+          - Không được giải thích code.
+          - Không được mô tả chức năng code.
+          - Không được đưa ra ví dụ code.
+          - Không được thêm nội dung ngoài mẫu trả lời.
+          - Nếu không phát hiện lỗi trực tiếp trong source thì ghi:
+            "Không phát hiện lỗi trực tiếp trong source".
+
+          Chỉ trả về đúng định dạng:
+
+          Kết luận: Được hoặc Không được
+          Độ tin cậy: xx%
+          Lỗi phát hiện:
+          - ...
+        `,
+      },
+      {
+        role: "user",
+        content: `
+          Dựa trên source code sau đây:
+          ${code}
+          Và câu hỏi từ người dùng:
+          ${text}
+        `,
+      },
+    ],
+    temperature: 0,
+  });
+  var check = chat.choices[0].message.content;
+  return check;
+}
 async function chat(text) {
   // LLM Chatbot
   const code = createCode(wifi, pass);
@@ -377,37 +422,91 @@ async function chat(text) {
         content: text,
       },
     ],
+    temperature: 0,
   });
-  addMsg(chat.choices[0].message.content, "bot");
-  const encoded = btoa(
-    unescape(encodeURIComponent(chat.choices[0].message.content)),
-  );
-  var old = null;
-  try {
-    old = await octokit.request("GET /repos/{owner}/{repo}/contents/{path}", {
-      owner: "Duczzzz",
-      repo: "testOTA",
-      path: `${user}/${user}.ino`,
-    });
-  } catch (err) {
-    old = undefined;
-  }
-  await octokit.request("PUT /repos/{owner}/{repo}/contents/{path}", {
-    owner: "Duczzzz",
-    repo: "testOTA",
-    path: `${user}/${user}.ino`,
-    message: `build:${user}`,
-    committer: {
-      name: "Minh Duc",
-      email: "ducpt423ac@gmail.com",
-    },
-    content: encoded,
-    headers: {
-      "X-GitHub-Api-Version": "2026-03-10",
-    },
-    sha: old ? old.data.sha : undefined,
-  });
+  var codeRes = chat.choices[0].message.content;
+  addMsg(codeRes, "bot");
+  showTyping();
+  setTimeout(async () => {
+    try {
+      const result = await checkRespone(codeRes, text);
+      addMsg(result, "bot");
+      hideTyping();
+      setTimeout(async () => {
+        let quest =
+          "Bạn có muốn thực hiện chạy đoạn code này không? Nó có thể gây ra lỗi.\nAI kiểm tra vẫn có thể mắc lỗi.";
 
+        if (confirm(quest)) {
+          const encoded = btoa(unescape(encodeURIComponent(codeRes)));
+
+          let old;
+
+          try {
+            old = await octokit.request(
+              "GET /repos/{owner}/{repo}/contents/{path}",
+              {
+                owner: "Duczzzz",
+                repo: "testOTA",
+                path: `${user}/${user}.ino`,
+              },
+            );
+          } catch {
+            old = undefined;
+          }
+
+          await octokit.request("PUT /repos/{owner}/{repo}/contents/{path}", {
+            owner: "Duczzzz",
+            repo: "testOTA",
+            path: `${user}/${user}.ino`,
+            message: `build-${Date.now()}:${user}`,
+            committer: {
+              name: "Minh Duc",
+              email: "ducpt423ac@gmail.com",
+            },
+            content: encoded,
+            headers: {
+              "X-GitHub-Api-Version": "2026-03-10",
+            },
+            sha: old ? old.data.sha : undefined,
+          });
+        }
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      hideTyping();
+      addMsg("Đã có lỗi xảy ra khi kiểm tra code. Vui lòng thử lại.", "bot");
+    }
+  }, 5000);
+  // let quest =
+  //   "Bạn có muốn thực hiện chạy đoạn code này không nó có thể gây ra lỗi? \n AI kiểm tra vẫn có thể mắc lỗi";
+  // if (confirm(quest) == true) {
+  //   const encoded = btoa(unescape(encodeURIComponent(codeRes)));
+  //   var old = null;
+  //   try {
+  //     old = await octokit.request("GET /repos/{owner}/{repo}/contents/{path}", {
+  //       owner: "Duczzzz",
+  //       repo: "testOTA",
+  //       path: `${user}/${user}.ino`,
+  //     });
+  //   } catch (err) {
+  //     old = undefined;
+  //   }
+  //   await octokit.request("PUT /repos/{owner}/{repo}/contents/{path}", {
+  //     owner: "Duczzzz",
+  //     repo: "testOTA",
+  //     path: `${user}/${user}.ino`,
+  //     message: `build-ruiro:${user}`,
+  //     committer: {
+  //       name: "Minh Duc",
+  //       email: "ducpt423ac@gmail.com",
+  //     },
+  //     content: encoded,
+  //     headers: {
+  //       "X-GitHub-Api-Version": "2026-03-10",
+  //     },
+  //     sha: old ? old.data.sha : undefined,
+  //   });
+  // }
   // Chatbot MCP
 
   // const chat = await client.chat.completions.create({
@@ -586,4 +685,6 @@ document.getElementById("save-config").onclick = function () {
   });
   alert("Cấu hình đã được lưu. Bạn có thể bắt đầu trò chuyện với chatbot.");
   document.getElementById("SW-SYSTEM").checked = false;
+  document.getElementById("system-box").style.display = "none";
+  document.getElementById("cb-warp").style.display = "flex";
 };
