@@ -36,16 +36,25 @@
         max-width: 100%;
       }
       #user {
-        color: red;
+        color: rgb(255, 178, 178);
       }
       #mail {
-        color: green;
+        padding: 10px;
+        color: rgb(151, 255, 151);
       }
       #ip {
-        color: blue;
+        color: rgb(116, 116, 255);
       }
       .control {
         margin: 0 auto;
+      }
+      strong {
+        color: rgb(255, 174, 174);
+      }
+      #controlUserLabel {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 14px;
+        color: rgb(227, 255, 150);
       }
     </style>
   </head>
@@ -82,12 +91,11 @@
     <div class="container">
       <div class="box" id="main">
         <section class="intro">
-          <h1 class="heading">Giới thiệu đề tài Kit STEM</h1>
+          <h1 class="heading">Giới thiệu nền tảng Nuke Dashboard</h1>
           <p>
-            Đề tài <strong>Kit STEM</strong> được thực hiện với mục tiêu nghiên
-            cứu, thiết kế và xây dựng một <strong>nền tảng IoT</strong> phục vụ
-            cho học tập và thực hành trong lĩnh vực STEM (Science, Technology,
-            Engineering, Mathematics).
+            nền tảng <strong>Nuke Dashboard</strong> được thực hiện với mục tiêu
+            nghiên cứu, thiết kế và xây dựng một <strong>nền tảng</strong> phục
+            vụ cho học tập và thực hành trong lĩnh vực lập trình nhúng và IoT.
           </p>
 
           <p>
@@ -98,14 +106,14 @@
           </p>
 
           <p>
-            Thông qua Kit STEM, người dùng có thể theo dõi, điều khiển và quản
-            lý các thiết bị IoT trực quan trên nền tảng web, đồng thời hiểu rõ
-            hơn về cách hệ thống IoT hoạt động từ tầng thiết bị đến tầng ứng
+            Thông qua Nuke Dashboard, người dùng có thể theo dõi, điều khiển và
+            quản lý các thiết bị IoT trực quan trên nền tảng web, đồng thời hiểu
+            rõ hơn về cách hệ thống IoT hoạt động từ tầng thiết bị đến tầng ứng
             dụng.
           </p>
 
           <p>
-            Website của đề tài sẽ liên tục được
+            Website của nền tảng sẽ liên tục được
             <strong>cập nhật và mở rộng các tính năng mới</strong> trong thời
             gian tới, nhằm nâng cao trải nghiệm người dùng và đáp ứng tốt hơn
             nhu cầu học tập, nghiên cứu.
@@ -115,9 +123,13 @@
       <div class="box" id="sub">
         <section class="intro">
           <h1 class="heading">Thông tin liên lạc</h1>
-          <p>
+          <p id="mail">
             - Liên hệ với chúng tôi qua email:
-            <span id="email"> ducpt423ac@gmail.com </span>
+            <strong>
+              <br />
+              <br />
+              ducpt423ac@gmail.com</strong
+            >
           </p>
           <p>- Các thành viên trong dự án:</p>
           <p>+ Nguyễn Thế Lương</p>
