@@ -351,7 +351,7 @@ async function chatinit() {
 // chatinit();
 async function checkRespone(code, text) {
   const chat = await client.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: "qwen/qwen3-32b",
     messages: [
       {
         role: "system",
@@ -391,6 +391,7 @@ async function checkRespone(code, text) {
       },
     ],
     temperature: 0,
+    reasoning_effort: "none",
   });
   var check = chat.choices[0].message.content;
   return check;
