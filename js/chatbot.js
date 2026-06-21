@@ -143,7 +143,7 @@ function createCode(ssid, pass) {
     void getupdate()
     {
         display.setTextColor(SSD1306_WHITE);
-        Firebase.setInt(fbdo, "/users/${user}/updateOTA",0);  
+        Firebase.setInt(fbdo, "/users/duc/updateOTA",0);  
         Serial.print("Firmware URL: ");
         Serial.println(firmwareUrl);
         HTTPClient http;
@@ -186,50 +186,36 @@ function createCode(ssid, pass) {
               });
               size_t written = Update.writeStream(client);
               display.clearDisplay();
-              if (Update.size() == written)
-              {
-                  display.setCursor(0, 10);
-                  display.print("Update successfully completed");
-                  Serial.println("Update successfully completed. Rebooting...");
-                  if (Update.end())
-                  {
-                      Serial.println("Rebooting...");
-                      display.setCursor(0, 30);
-                      display.printf("Rebooting...");
-                      ESP.restart();
-                  } 
-                  else 
-                  {
-                      Serial.print("Update failed: ");
-                      display.setCursor(0, 30);
-                      display.print("Update failed");
-                      Serial.println(Update.errorString());
-                  }
-              }
-              else
-              {
-                  display.setCursor(0, 30);
-                  display.print("Not enough space for OTA.");
-                  Serial.println("Not enough space for OTA.");
-              }
-          } 
-            else
-            {
+          if (written == Update.size()) {
+            Serial.println("Update ghi du du lieu.");
+            if (Update.end()) {
+              if (Update.isFinished()) {
+                Serial.println("Update thanh cong. Dang khoi dong lai...");
+                display.clearDisplay();
                 display.setCursor(0, 10);
-                display.print("Failed to begin OTA update.");
-                Serial.println("Failed to begin OTA update.");
+                display.print("Update thanh cong");
+                display.setCursor(0, 30);
+                display.print("Rebooting...");
+                display.display();
+                delay(1000);
+                ESP.restart();
+              } else {
+                Serial.println("Update chua hoan tat!");
+              }
+            } else {
+              Serial.print("Update failed: ");
+              Serial.println(Update.errorString());
             }
+          } else {
+            Serial.println("Ghi firmware bi thieu du lieu!");
+          }
+        } else {
+          Serial.println("Khong the bat dau OTA!");
         }
-        else
-        {
-            display.setCursor(0, 10);
-            display.print("Failed to download firmware. HTTP code: ");
-            display.println(httpCode);
-            Serial.print("Failed to download firmware. HTTP code: ");
-            Serial.println(httpCode);
+        }else {
+          Serial.print("Tai firmware that bai. HTTP code: ");
+          Serial.println(httpCode);
         }
-        display.display();
-        delay(400);
         http.end();
     }
 
