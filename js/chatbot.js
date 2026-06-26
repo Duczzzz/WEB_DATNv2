@@ -100,6 +100,7 @@ function createCode(ssid, pass) {
     // Nút nhấn SW8 kết nối chân GPIO10
     // Nút nhấn SW9 kết nối chân GPIO12 
     // Nút nhấn SW11 kết nối chân GPIO14
+    // Động cơ servo kết nối chân GPIO17
     #include <Wire.h>
     #include <FirebaseESP32.h>
     #include <WiFi.h>
@@ -110,6 +111,7 @@ function createCode(ssid, pass) {
     #include <HTTPClient.h>
     #include <Update.h>
     #include <Adafruit_BME280.h>
+    #include <ESP32Servo.h>
 
     const char* ssid = "${ssid}";
     const char* pass = "${pass}";
@@ -119,6 +121,9 @@ function createCode(ssid, pass) {
 
     #define LED 2
 
+    Servo myservo;
+    #define servoPin 17
+    
     TwoWire I2C_BME = TwoWire(0);
     TwoWire I2C_OLED = TwoWire(1);
 
@@ -235,6 +240,12 @@ function createCode(ssid, pass) {
         Serial.println("OLED fail!");
         while (1);
       }
+      ESP32PWM::allocateTimer(0);
+      ESP32PWM::allocateTimer(1);
+      ESP32PWM::allocateTimer(2);
+      ESP32PWM::allocateTimer(3);
+      myservo.setPeriodHertz(50);
+      myservo.attach(servoPin, 1000, 2000);
       display.clearDisplay();
       display.setCursor(25, 30);
       display.print("NUKEDASHBOARD");
