@@ -345,7 +345,7 @@ async function chatinit() {
   document.getElementById("Welcome").textContent =
     chat.choices[0].message.content;
 }
-// chatinit();
+chatinit();
 async function checkRespone(code, text) {
   const chat = await client.chat.completions.create({
     model: "qwen/qwen3-32b",
